@@ -1,6 +1,6 @@
 name: mortgage-calculator-app
 services:
-# React Frontend 
+# React Frontend - With buildpack detection
 - name: frontend
   source_dir: webapp
   github:
@@ -21,16 +21,8 @@ services:
     value: "G-43FMLL1ZG0"
   routes:
   - path: /
-  health_check:
-    http_path: /
-    port: 3000
-    initial_delay_seconds: 30
-    period_seconds: 10
-    timeout_seconds: 5
-    success_threshold: 1
-    failure_threshold: 3
 
-# Rails Backend API
+# Rails Backend API - With buildpack detection
 - name: rails-api
   source_dir: backend-api
   github:
