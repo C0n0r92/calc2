@@ -1,8 +1,8 @@
 name: mortgage-calculator-app
 services:
-# React Frontend - Static site from root
+# React Frontend 
 - name: frontend
-  source_dir: /
+  source_dir: webapp
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
@@ -30,9 +30,9 @@ services:
     success_threshold: 1
     failure_threshold: 3
 
-# Rails Backend API - Using Ruby files from root
+# Rails Backend API
 - name: rails-api
-  source_dir: /
+  source_dir: backend-api
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
