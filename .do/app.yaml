@@ -1,7 +1,7 @@
 name: mortgage-calculator-app
 
 services:
-# Rails API - Following official DigitalOcean Ruby buildpack documentation
+# Rails API - Using heroku-buildpack-ruby via DigitalOcean
 - name: rails-api
   source_dir: mortgage_calculator_api
   github:
