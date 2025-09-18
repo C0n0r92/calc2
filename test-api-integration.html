@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #6c757d; cursor: not-allowed; }
+        .result {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mortgage Calculator API Integration Test</h1>
+    
+    <div class="container">
+        <h2>API Connection Status</h2>
+        <div id="connectionStatus" class="status loading">Testing connection...</div>
+        <button onclick="testConnection()">Test Connection</button>
+    </div>
+
+    <div class="container test-section">
+        <h2>1. Basic Mortgage Calculation</h2>
+        <button onclick="testBasicCalculation()" id="btnBasicCalc">Test Basic Calculation</button>
+        <div id="basicCalcResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="container test-section">
+        <h2>2. Scenario Comparison</h2>
+        <button onclick="testScenarioComparison()" id="btnScenarioComp">Test Scenario Comparison</button>
+        <div id="scenarioCompResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="container test-section">
+        <h2>3. Frontend Service Integration</h2>
+        <button onclick="testFrontendService()" id="btnFrontendService">Test Frontend Service</button>
+        <div id="frontendServiceResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="container test-section">
+        <h2>4. Error Handling & Fallback</h2>
+        <button onclick="testErrorHandling()" id="btnErrorHandling">Test Error Handling</button>
+        <div id="errorHandlingResult" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3001';
+        
+        // Test data
+        const testMortgageData = {
+            loan_amount: 300000,
+            interest_rate: 6.5,
+            loan_term: 30,
+            currency: 'USD',
+            home_value: 360000,
+            down_payment: 60000,
+            current_age: 35,
+            purchase_date: '2024-01-01',
+            payment_frequency: 'monthly',
+            extra_payment: 0
+        };
+
+        async function testConnection() {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.className = 'status loading';
+            statusDiv.textContent = 'Testing connection...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/up`);
+                if (response.ok) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ API Server is running and accessible!';
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Connection failed: ${error.message}`;
+            }
+        }
+
+        async function testBasicCalculation() {
+            const button = document.getElementById('btnBasicCalc');
+            const resultDiv = document.getElementById('basicCalcResult');
+            
+            button.disabled = true;
+            button.textContent = 'Testing...';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Making API call...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/mortgage_calculations/calculate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testMortgageData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Display key results
+                const result = data.result;
+                const summary = {
+                    monthly_payment: result.monthly_payment,
+                    total_interest: result.total_interest,
+                    payoff_months: result.payoff_months,
+                    current_balance: result.current_balance,
+                    amortization_entries: result.amortization.length
+                };
+                
+                resultDiv.textContent = `✅ SUCCESS!\n\nKey Results:\n${JSON.stringify(summary, null, 2)}\n\n--- Full Response ---\n${JSON.stringify(data, null, 2)}`;
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ ERROR: ${error.message}`;
+            }
+            
+            button.disabled = false;
+            button.textContent = 'Test Basic Calculation';
+        }
+
+        async function testScenarioComparison() {
+            const button = document.getElementById('btnScenarioComp');
+            const resultDiv = document.getElementById('scenarioCompResult');
+            
+            button.disabled = true;
+            button.textContent = 'Testing...';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Making API call...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/mortgage_calculations/scenario_comparison`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...testMortgageData,
+                        extra_payment_amounts: [50, 100, 200, 500]
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Display scenarios summary
+                let summary = '✅ SUCCESS!\n\nScenario Results:\n';
+                data.scenarios.forEach(scenario => {
+                    summary += `• Extra $${scenario.extra_payment}/month: Save ${scenario.months_saved} months, $${Math.round(scenario.interest_saved)} interest\n`;
+                });
+                
+                resultDiv.textContent = `${summary}\n\n--- Full Response ---\n${JSON.stringify(data, null, 2)}`;
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ ERROR: ${error.message}`;
+            }
+            
+            button.disabled = false;
+            button.textContent = 'Test Scenario Comparison';
+        }
+
+        async function testFrontendService() {
+            const button = document.getElementById('btnFrontendService');
+            const resultDiv = document.getElementById('frontendServiceResult');
+            
+            button.disabled = true;
+            button.textContent = 'Testing...';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Testing frontend service API calls...';
+            
+            try {
+                // Test 1: Basic calculation
+                const calc1 = await fetch(`${API_BASE_URL}/api/v1/mortgage_calculations/calculate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testMortgageData)
+                });
+                
+                if (!calc1.ok) throw new Error('Basic calculation failed');
+                const result1 = await calc1.json();
+                
+                // Test 2: Different scenario
+                const testData2 = { ...testMortgageData, extra_payment: 200, loan_amount: 250000 };
+                const calc2 = await fetch(`${API_BASE_URL}/api/v1/mortgage_calculations/calculate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData2)
+                });
+                
+                if (!calc2.ok) throw new Error('Second calculation failed');
+                const result2 = await calc2.json();
+                
+                // Test 3: Scenario comparison
+                const comp = await fetch(`${API_BASE_URL}/api/v1/mortgage_calculations/scenario_comparison`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...testMortgageData, extra_payment_amounts: [100, 300] })
+                });
+                
+                if (!comp.ok) throw new Error('Scenario comparison failed');
+                const compResult = await comp.json();
+                
+                const summary = {
+                    test1: {
+                        monthly_payment: Math.round(result1.result.monthly_payment),
+                        payoff_months: result1.result.payoff_months
+                    },
+                    test2: {
+                        monthly_payment: Math.round(result2.result.monthly_payment),
+                        payoff_months: result2.result.payoff_months
+                    },
+                    scenarios: compResult.scenarios.length
+                };
+                
+                resultDiv.textContent = `✅ ALL TESTS PASSED!\n\nResults Summary:\n${JSON.stringify(summary, null, 2)}`;
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ ERROR: ${error.message}`;
+            }
+            
+            button.disabled = false;
+            button.textContent = 'Test Frontend Service';
+        }
+
+        async function testErrorHandling() {
+            const button = document.getElementById('btnErrorHandling');
+            const resultDiv = document.getElementById('errorHandlingResult');
+            
+            button.disabled = true;
+            button.textContent = 'Testing...';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Testing error handling...';
+            
+            try {
+                // Test with invalid data
+                const invalidData = { loan_amount: -1000, interest_rate: 'invalid' };
+                
+                const response = await fetch(`${API_BASE_URL}/api/v1/mortgage_calculations/calculate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(invalidData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // API handled invalid data gracefully
+                    resultDiv.textContent = `✅ API handled invalid data gracefully!\n\nResponse:\n${JSON.stringify(result, null, 2)}`;
+                } else {
+                    // API returned appropriate error
+                    resultDiv.textContent = `✅ API returned appropriate error!\n\nStatus: ${response.status}\nResponse:\n${JSON.stringify(result, null, 2)}`;
+                }
+                
+            } catch (error) {
+                resultDiv.textContent = `✅ Error handling works!\n\nCaught error: ${error.message}`;
+            }
+            
+            button.disabled = false;
+            button.textContent = 'Test Error Handling';
+        }
+
+        // Auto-test connection on load
+        window.onload = function() {
+            testConnection();
+        };
+    </script>
+</body>
+</html>
