@@ -16,8 +16,8 @@ services:
   instance_count: 1
   instance_size_slug: basic-xxs
   http_port: 8080
-  build_command: ASSETS_PRECOMPILE=true bundle install && bundle exec rails assets:precompile
-  run_command: bundle exec rails db:migrate RAILS_ENV=production && bundle exec rails db:seed RAILS_ENV=production && bundle exec rails server -b 0.0.0.0 -p $PORT
+  build_command: bundle install && bundle exec rails assets:precompile RAILS_ENV=production
+  run_command: bundle exec rails db:migrate && bundle exec rails db:seed && bundle exec rails server -b 0.0.0.0 -p $PORT
   envs:
   - key: RAILS_ENV
     value: production
