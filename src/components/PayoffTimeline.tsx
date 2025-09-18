@@ -1,5 +1,9 @@
 import React from 'react';
 import { TrendingUp, Calendar, DollarSign, Target, PieChart, Home } from 'lucide-react';
+import { Tooltip } from './Tooltip';
+import { getTooltip, getTooltipTitle } from '../data/mortgageGlossary';
+import { useAnimatedNumber, useAnimatedPercentage, useAnimatedCurrency } from '../hooks/useAnimatedNumber';
+import { AnimatedProgressBar } from './AnimatedProgressBar';
 
 interface PayoffTimelineProps {
   loanAmount: number;
@@ -52,6 +56,13 @@ export const PayoffTimeline: React.FC<PayoffTimelineProps> = ({
   const remainingMonths = totalPayoffMonths - monthsSincePurchase;
   const ageAtPayoff = currentAge + Math.floor(remainingMonths / 12);
 
+  // Animated values with shorter delays for faster feedback
+  const animatedEquityPercentage = useAnimatedPercentage(equityPercentage, { duration: 800, delay: 100 });
+  const animatedEquityBuilt = useAnimatedCurrency(equityBuilt, currency, { duration: 800, delay: 200 });
+  const animatedRemainingMonths = useAnimatedNumber(remainingMonths, { duration: 600, delay: 300 });
+  const animatedMonthlyPayment = useAnimatedCurrency(monthlyPayment + extraPayment, currency, { duration: 600, delay: 400 });
+  const animatedProgressPercentage = useAnimatedPercentage(progressPercentage, { duration: 1000, delay: 150 });
+
   const yearsMonthsFromMonths = (months: number) => {
     const years = Math.floor(months / 12);
     const remainingMonths = months % 12;
@@ -68,10 +79,10 @@ export const PayoffTimeline: React.FC<PayoffTimelineProps> = ({
             <TrendingUp className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-purple-800 bg-clip-text text-transparent">
-              Loan Progress Timeline
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-purple-800 bg-clip-text text-transparent">
+              Detailed Progress & Breakdown
             </h3>
-            <p className="text-gray-600 text-sm mt-1">Track your mortgage payoff journey</p>
+            <p className="text-gray-600 text-sm mt-1">Timeline, milestones, and monthly allocation</p>
           </div>
         </div>
       </div>
@@ -123,36 +134,6 @@ export const PayoffTimeline: React.FC<PayoffTimelineProps> = ({
         </div>
       </div>
 
-      {/* Progress Overview */}
-      <div className="grid grid-cols-3 gap-6 mb-10">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-6 text-center border border-blue-200/50 hover:shadow-lg transition-all duration-300">
-          <div className="text-3xl font-black text-blue-600 mb-2">
-            {equityPercentage.toFixed(1)}%
-          </div>
-          <div className="text-sm font-semibold text-blue-700 mb-1">Equity Built</div>
-          <div className="text-xs text-blue-600 font-medium bg-blue-100 px-3 py-1 rounded-full">
-            {formatCurrency(equityBuilt)}
-          </div>
-        </div>
-        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-2xl p-6 text-center border border-emerald-200/50 hover:shadow-lg transition-all duration-300">
-          <div className="text-3xl font-black text-emerald-600 mb-2">
-            {yearsMonthsFromMonths(remainingMonths)}
-          </div>
-          <div className="text-sm font-semibold text-emerald-700 mb-1">Remaining</div>
-          <div className="text-xs text-emerald-600 font-medium bg-emerald-100 px-3 py-1 rounded-full">
-            Age {ageAtPayoff} at payoff
-          </div>
-        </div>
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl p-6 text-center border border-purple-200/50 hover:shadow-lg transition-all duration-300">
-          <div className="text-3xl font-black text-purple-600 mb-2">
-            {formatCurrency(monthlyPayment + extraPayment)}
-          </div>
-          <div className="text-sm font-semibold text-purple-700 mb-1">Monthly Payment</div>
-          <div className="text-xs text-purple-600 font-medium bg-purple-100 px-3 py-1 rounded-full">
-            {extraPayment > 0 ? `+${formatCurrency(extraPayment)} extra` : 'Base payment'}
-          </div>
-        </div>
-      </div>
 
       {/* Timeline Visualization */}
       <div className="relative">
@@ -162,18 +143,23 @@ export const PayoffTimeline: React.FC<PayoffTimelineProps> = ({
           <span>Payoff Complete</span>
         </div>
         
-        {/* Progress Bar */}
-        <div className="relative w-full bg-gray-200 rounded-full h-4 mb-4">
+        {/* Animated Progress Bar */}
+        <div className="relative w-full bg-gray-200 rounded-full h-4 mb-4 overflow-hidden">
           <div
-            className="absolute top-0 left-0 h-4 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full transition-all duration-1000 ease-out"
-            style={{ width: `${Math.max(progressPercentage, 2)}%` }}
+            className="absolute top-0 left-0 h-4 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full transition-all duration-1500 ease-out"
+            style={{ width: `${Math.max(animatedProgressPercentage.value || progressPercentage, 2)}%` }}
           />
           
           {/* Current Position Marker */}
           <div
-            className="absolute top-0 h-4 w-1 bg-white border-2 border-blue-600 rounded-full transform -translate-x-0.5"
-            style={{ left: `${Math.max(progressPercentage, 2)}%` }}
+            className="absolute top-0 h-4 w-1 bg-white border-2 border-blue-600 rounded-full transform -translate-x-0.5 transition-all duration-1500 ease-out"
+            style={{ left: `${Math.max(animatedProgressPercentage.value || progressPercentage, 2)}%` }}
           />
+          
+          {/* Shimmer effect during animation */}
+          {animatedProgressPercentage.isAnimating && (
+            <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
+          )}
         </div>
 
         {/* Timeline Labels */}
@@ -187,7 +173,7 @@ export const PayoffTimeline: React.FC<PayoffTimelineProps> = ({
       </div>
 
       {/* Key Milestones */}
-      <div className="mt-6 grid grid-cols-2 gap-4">
+      <div className="mt-6 grid grid-cols-3 gap-4">
         <div className="bg-blue-50 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
             <Calendar className="w-4 h-4 text-blue-600" />
@@ -213,6 +199,27 @@ export const PayoffTimeline: React.FC<PayoffTimelineProps> = ({
             {((equityBuilt / loanAmount) * 100).toFixed(1)}% of original loan
           </div>
         </div>
+
+        <div className="bg-purple-50 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <DollarSign className="w-4 h-4 text-purple-600" />
+            <span className="text-sm font-medium text-purple-900 flex items-center">
+              Interest Paid
+              <Tooltip 
+                content={getTooltip('totalInterest')}
+                title={getTooltipTitle('totalInterest')}
+                iconClassName="w-3 h-3 text-purple-400 hover:text-purple-600 cursor-help ml-1"
+                maxWidth="max-w-lg"
+              />
+            </span>
+          </div>
+          <div className="text-lg font-bold text-purple-600">
+            {formatCurrency((monthlyPayment * monthsSincePurchase) - equityBuilt)}
+          </div>
+          <div className="text-xs text-purple-700 mt-1">
+            Total interest to date
+          </div>
+        </div>
       </div>
 
 
@@ -232,7 +239,15 @@ export const PayoffTimeline: React.FC<PayoffTimelineProps> = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                    <span className="text-sm text-gray-700">Interest</span>
+                    <span className="text-sm text-gray-700 flex items-center">
+                      Interest
+                      <Tooltip 
+                        content={getTooltip('interest')}
+                        title={getTooltipTitle('interest')}
+                        iconClassName="w-3 h-3 text-gray-400 hover:text-red-500 cursor-help ml-1"
+                        maxWidth="max-w-lg"
+                      />
+                    </span>
                   </div>
                   <span className="text-sm font-medium">{formatCurrency(currentInterest)}</span>
                 </div>
@@ -246,7 +261,15 @@ export const PayoffTimeline: React.FC<PayoffTimelineProps> = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span className="text-sm text-gray-700">Principal</span>
+                    <span className="text-sm text-gray-700 flex items-center">
+                      Principal
+                      <Tooltip 
+                        content={getTooltip('principal')}
+                        title={getTooltipTitle('principal')}
+                        iconClassName="w-3 h-3 text-gray-400 hover:text-blue-500 cursor-help ml-1"
+                        maxWidth="max-w-lg"
+                      />
+                    </span>
                   </div>
                   <span className="text-sm font-medium">{formatCurrency(currentPrincipal)}</span>
                 </div>

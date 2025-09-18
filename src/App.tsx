@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Calculator, Home, Save, AlertCircle, Wifi, WifiOff, Info, CheckCircle2 } from 'lucide-react';
+import { Calculator, Home, Save, AlertCircle, Wifi, WifiOff, TrendingUp } from 'lucide-react';
 import { MortgageInputs, MortgageScenario, CURRENCIES } from './types/mortgage';
 import { calculateMortgage } from './utils/mortgageCalculationsApi';
-import { validateInput } from './utils/formatters';
+import { validateInput, formatCurrency } from './utils/formatters';
 import { NumberInput } from './components/NumberInput';
 import { PayoffTimeline } from './components/PayoffTimeline';
 import { OverpaymentScenariosApi } from './components/OverpaymentScenariosApi';
 import { AmortizationTable } from './components/AmortizationTable';
 import { ScenarioComparison } from './components/ScenarioComparison';
+import { CondensedExtraPaymentImpact } from './components/CondensedExtraPaymentImpact';
+import { RateTermExplorer } from './components/RateTermExplorer';
+import { LabelWithTooltip } from './components/Tooltip';
+import { getTooltip, getTooltipTitle } from './data/mortgageGlossary';
 import { apiService } from './services/api';
 
 function App() {
@@ -195,8 +199,18 @@ function App() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Initializing calculator...</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 mx-auto mb-6"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent absolute top-0 left-1/2 transform -translate-x-1/2"></div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-gray-700 font-medium text-lg">Initializing calculator...</p>
+            <div className="flex justify-center space-x-1">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -317,9 +331,11 @@ function App() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Home Value
-                  </label>
+                  <LabelWithTooltip 
+                    label="Home Value"
+                    tooltip={getTooltip('homeValue')}
+                    title={getTooltipTitle('homeValue')}
+                  />
                   <NumberInput
                     value={inputs.homeValue}
                     onChange={(value) => updateInput('homeValue', value)}
@@ -336,9 +352,11 @@ function App() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Down Payment
-                  </label>
+                  <LabelWithTooltip 
+                    label="Down Payment"
+                    tooltip={getTooltip('downPayment')}
+                    title={getTooltipTitle('downPayment')}
+                  />
                   <NumberInput
                     value={inputs.downPayment}
                     onChange={(value) => updateInput('downPayment', value)}
@@ -360,9 +378,11 @@ function App() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Loan Amount
-                  </label>
+                  <LabelWithTooltip 
+                    label="Loan Amount"
+                    tooltip={getTooltip('loanAmount')}
+                    title={getTooltipTitle('loanAmount')}
+                  />
                   <NumberInput
                     value={inputs.loanAmount}
                     onChange={(value) => updateInput('loanAmount', value)}
@@ -379,9 +399,11 @@ function App() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Interest Rate (%)
-                  </label>
+                  <LabelWithTooltip 
+                    label="Interest Rate (%)"
+                    tooltip={getTooltip('interestRate')}
+                    title={getTooltipTitle('interestRate')}
+                  />
                   <input
                     type="number"
                     step="0.1"
@@ -469,9 +491,11 @@ function App() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Extra Monthly Payment
-                  </label>
+                  <LabelWithTooltip 
+                    label="Extra Monthly Payment"
+                    tooltip={getTooltip('extraPayment')}
+                    title={getTooltipTitle('extraPayment')}
+                  />
                   <NumberInput
                     value={inputs.extraPayment}
                     onChange={(value) => updateInput('extraPayment', value)}
@@ -503,9 +527,11 @@ function App() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    One-Time Extra Payment
-                  </label>
+                  <LabelWithTooltip 
+                    label="One-Time Extra Payment"
+                    tooltip={getTooltip('oneTimePayment')}
+                    title={getTooltipTitle('oneTimePayment')}
+                  />
                   <NumberInput
                     value={inputs.oneTimePayment}
                     onChange={(value) => updateInput('oneTimePayment', value)}
@@ -536,8 +562,8 @@ function App() {
                   className={`w-full font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 text-lg ${
                     hasErrors || isCalculating
                       ? 'bg-gray-400 cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white'
-                  }`}
+                      : 'bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white hover:shadow-blue-500/25'
+                  } ${isCalculating ? 'animate-pulse' : ''}`}
                 >
                   {isCalculating ? (
                     <>
@@ -565,7 +591,65 @@ function App() {
 
           {/* Results Panel */}
           <div className="xl:col-span-3 lg:col-span-2 space-y-8">
-            {/* Loan Progress Timeline */}
+            {/* Loan Progress Overview - Just the key metrics */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 p-8 hover:shadow-3xl transition-all duration-500">
+              <div className="mb-8">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-4 rounded-2xl shadow-lg">
+                    <TrendingUp className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-purple-800 bg-clip-text text-transparent">
+                      Loan Progress Overview
+                    </h3>
+                    <p className="text-gray-600 text-sm mt-1">Your current mortgage status</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Progress Overview - Key metrics only */}
+              <div className="grid grid-cols-3 gap-6">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-6 text-center border border-blue-200/50 hover:shadow-lg transition-all duration-300">
+                  <div className="text-3xl font-black text-blue-600 mb-2">
+                    {((((calculatedInputs.loanAmount - currentBalance) / calculatedInputs.loanAmount) * 100) || 0).toFixed(1)}%
+                  </div>
+                  <div className="text-sm font-semibold text-blue-700 mb-1">Equity Built</div>
+                  <div className="text-xs text-blue-600 font-medium bg-blue-100 px-3 py-1 rounded-full">
+                    {formatCurrency(calculatedInputs.loanAmount - currentBalance, calculatedInputs.currency)}
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-2xl p-6 text-center border border-emerald-200/50 hover:shadow-lg transition-all duration-300">
+                  <div className="text-3xl font-black text-emerald-600 mb-2">
+                    {Math.floor((calculations.payoffMonths - monthsSincePurchase) / 12)}y {(calculations.payoffMonths - monthsSincePurchase) % 12}mo
+                  </div>
+                  <div className="text-sm font-semibold text-emerald-700 mb-1">Remaining</div>
+                  <div className="text-xs text-emerald-600 font-medium bg-emerald-100 px-3 py-1 rounded-full">
+                    Age {calculatedInputs.currentAge + Math.floor((calculations.payoffMonths - monthsSincePurchase) / 12)} at payoff
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl p-6 text-center border border-purple-200/50 hover:shadow-lg transition-all duration-300">
+                  <div className="text-3xl font-black text-purple-600 mb-2">
+                    {formatCurrency(calculations.monthlyPayment + calculatedInputs.extraPayment, calculatedInputs.currency)}
+                  </div>
+                  <div className="text-sm font-semibold text-purple-700 mb-1">Monthly Payment</div>
+                  <div className="text-xs text-purple-600 font-medium bg-purple-100 px-3 py-1 rounded-full">
+                    Total with extra
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Rate & Term Explorer - Now includes Extra Payment Quick Reference */}
+            <RateTermExplorer
+              baseInputs={calculatedInputs}
+              currency={calculatedInputs.currency}
+              baseScenario={{
+                totalInterest: calculations.totalInterest,
+                payoffMonths: calculations.payoffMonths
+              }}
+            />
+
+            {/* Full Loan Progress Timeline - Detailed view */}
             <PayoffTimeline
               loanAmount={calculatedInputs.loanAmount}
               currentBalance={currentBalance}
@@ -582,23 +666,6 @@ function App() {
               oneTimePayment={calculatedInputs.oneTimePayment}
               downPayment={calculatedInputs.downPayment}
               homeValue={calculatedInputs.homeValue}
-            />
-
-            {/* Extra Payment Impact */}
-            <OverpaymentScenariosApi
-              baseScenario={{
-                totalInterest: calculations.totalInterest,
-                payoffMonths: calculations.payoffMonths
-              }}
-              loanAmount={calculatedInputs.loanAmount}
-              interestRate={calculatedInputs.interestRate}
-              loanTerm={calculatedInputs.loanTerm}
-              currentAge={calculatedInputs.currentAge}
-              currentBalance={currentBalance}
-              monthsSincePurchase={monthsSincePurchase}
-              extraPaymentStartsNow={calculatedInputs.extraPaymentStartsNow}
-              currency={calculatedInputs.currency}
-              fullInputs={calculatedInputs}
             />
 
             {/* Amortization Table */}
