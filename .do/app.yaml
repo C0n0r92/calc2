@@ -1,8 +1,8 @@
 name: mortgage-calculator-app
 services:
-# Rails Backend API
+# Rails Backend API - At repository root like Python project
 - name: rails-api
-  source_dir: backend
+  source_dir: /
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
