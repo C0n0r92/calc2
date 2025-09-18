@@ -7,7 +7,36 @@ domains:
   type: ALIAS
 
 services:
-# React Frontend (Static Site)
+# Rails Backend API
+- name: rails-api
+  source_dir: /mortgage_calculator_api
+  github:
+    repo: C0n0r92/mortgage_payoff_calculator
+    branch: main
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 8080
+  build_command: bundle install --without development test
+  run_command: bundle exec rails db:migrate && bundle exec puma -C config/puma.rb
+  envs:
+  - key: RAILS_ENV
+    value: production
+  - key: RAILS_LOG_TO_STDOUT
+    value: "true"
+  - key: RAILS_SERVE_STATIC_FILES
+    value: "true"
+  - key: PORT
+    value: "8080"
+  - key: SECRET_KEY_BASE
+    value: "7cf6edda93cf09a4f69db15991af58789ee1264cd2ae54d49a9f52cedea88e291aa352a0d9d67e5feb1a63eb093ef9ff2c7f7e540867d1ab992e7a1d942e92d9"
+  - key: DATABASE_URL
+    value: "${mortgage-calculator-db.DATABASE_URL}"
+    scope: RUN_TIME
+  routes:
+  - path: /api
+    preserve_path_prefix: true
+
+# React Frontend
 - name: frontend
   source_dir: /
   github:
@@ -15,15 +44,22 @@ services:
     branch: main
   instance_count: 1
   instance_size_slug: basic-xxs
-  http_port: 8080
+  http_port: 4173
   build_command: npm install && npm run build
-  run_command: npx serve -s dist -l $PORT
+  run_command: npm run preview -- --host 0.0.0.0 --port $PORT
   envs:
   - key: NODE_ENV
     value: production
+  - key: VITE_API_URL
+    value: "/api"
   - key: VITE_GA_MEASUREMENT_ID
     value: "G-43FMLL1ZG0"
   routes:
   - path: /
+
+databases:
+- name: mortgage-calculator-db
+  engine: PG
+  production: true
 
 static_sites: []
