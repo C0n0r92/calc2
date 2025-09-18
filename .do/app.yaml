@@ -1,6 +1,6 @@
 name: mortgage-calculator-app
 services:
-# Rails Backend API - At repository root like Python project
+# Rails Backend API - Simple configuration
 - name: rails-api
   source_dir: /
   github:
@@ -9,47 +9,19 @@ services:
   instance_count: 1
   instance_size_slug: basic-xxs
   http_port: 8080
-  build_command: bundle install && bundle exec rails db:prepare && bundle exec rails assets:precompile
-  run_command: bundle exec puma -C config/puma.rb
   environment_slug: ruby
-  buildpack_stack: ubuntu-22
-  buildpacks:
-  - heroku/ruby
   envs:
   - key: RAILS_ENV
-    scope: RUN_AND_BUILD_TIME
     value: production
   - key: RAILS_MASTER_KEY
-    scope: RUN_AND_BUILD_TIME
     value: ae744e6df9969de7459815939e7f7ed3
-  - key: RAILS_SERVE_STATIC_FILES
-    scope: RUN_AND_BUILD_TIME
-    value: "true"
-  - key: RAILS_LOG_TO_STDOUT
-    scope: RUN_AND_BUILD_TIME
-    value: "true"
   - key: DATABASE_URL
-    scope: RUN_AND_BUILD_TIME
     value: ${managed-db.DATABASE_URL}
-  - key: SECRET_KEY_BASE
-    scope: RUN_AND_BUILD_TIME
-    value: "7cf6edda93cf09a4f69db15991af58789ee1264cd2ae54d49a9f52cedea88e291aa352a0d9d67e5feb1a63eb093ef9ff2c7f7e540867d1ab992e7a1d942e92d9"
-  - key: PORT
-    scope: RUN_AND_BUILD_TIME
-    value: "8080"
   routes:
   - path: /api
     preserve_path_prefix: true
-  health_check:
-    http_path: /up
 
 databases:
 - name: managed-db
   engine: PG
   production: true
-
-domains:
-- domain: mortgagepayoffcalculator.io
-  type: PRIMARY
-- domain: www.mortgagepayoffcalculator.io
-  type: ALIAS
