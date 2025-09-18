@@ -40,7 +40,7 @@ services:
 
 # React Frontend
 - name: frontend
-  source_dir: /
+  source_dir: /frontend
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
