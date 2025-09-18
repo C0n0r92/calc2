@@ -1,0 +1,23 @@
+name: mortgage-calculator-app
+
+services:
+# Rails API - Following official DigitalOcean Ruby buildpack documentation
+- name: rails-api
+  source_dir: mortgage_calculator_api
+  github:
+    repo: C0n0r92/mortgage_payoff_calculator
+    branch: main
+  environment_slug: ruby
+  envs:
+  - key: RAILS_ENV
+    value: production
+  - key: RAILS_MASTER_KEY
+    value: ae744e6df9969de7459815939e7f7ed3
+  - key: DATABASE_URL
+    value: "${managed-db.DATABASE_URL}"
+    scope: RUN_TIME
+
+databases:
+- name: managed-db
+  engine: PG
+  production: true

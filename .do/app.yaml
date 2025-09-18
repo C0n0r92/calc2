@@ -10,7 +10,6 @@ services:
   instance_count: 1
   instance_size_slug: basic-xxs
   http_port: 8080
-  environment_slug: ruby
   build_command: ASSETS_PRECOMPILE=true bundle install && bundle exec rails assets:precompile
   run_command: bundle exec rails db:migrate RAILS_ENV=production && bundle exec rails db:seed RAILS_ENV=production && bundle exec rails server -b 0.0.0.0 -p $PORT
   envs:
@@ -42,21 +41,6 @@ services:
   - key: GOOGLE_OAUTH_CLIENT_SECRET
     value: "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"
   - key: GOOGLE_OAUTH_REDIRECT_URI
-    value: "https://mortgagepayoffcalculator.io/api/auth/google_oauth2/callback"
+    value: "https://ingredientcheck.io/api/auth/google_oauth2/callback"
   routes:
   - path: /api
-    preserve_path_prefix: true
-  health_check:
-    http_path: /up
-
-databases:
-- name: managed-db
-  cluster_name: mortgage-calculator-cluster
-  engine: PG
-  production: true
-
-domains:
-- domain: mortgagepayoffcalculator.io
-  type: PRIMARY
-- domain: www.mortgagepayoffcalculator.io
-  type: ALIAS
