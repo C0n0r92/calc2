@@ -1,17 +1,14 @@
 name: mortgage-calculator-app
 services:
-# React Frontend - With buildpack detection
+# React Frontend - Static Site
 - name: frontend
+  type: static_site
   source_dir: webapp
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
-  instance_count: 1
-  instance_size_slug: basic-xxs
-  http_port: 3000
   build_command: npm install && npm run build
-  run_command: npx serve -s dist -l 3000
-  environment_slug: node-js
+  output_dir: dist
   envs:
   - key: NODE_ENV
     value: production
