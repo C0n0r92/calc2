@@ -1,7 +1,7 @@
 name: mortgage-calculator-app
 
 services:
-# Rails Backend API
+# Rails Backend API with explicit buildpack
 - name: rails-api
   source_dir: mortgage_calculator_api
   github:
@@ -10,6 +10,7 @@ services:
   instance_count: 1
   instance_size_slug: basic-xxs
   environment_slug: ruby
+  buildpack_stack: ubuntu-22
   envs:
   - key: RAILS_ENV
     value: production
@@ -28,7 +29,7 @@ services:
   health_check:
     http_path: /up
 
-# React Frontend - Static Site
+# React Frontend with explicit buildpack
 - name: frontend
   source_dir: frontend
   github:
@@ -37,6 +38,7 @@ services:
   instance_count: 1
   instance_size_slug: basic-xxs
   environment_slug: node-js
+  buildpack_stack: ubuntu-22
   envs:
   - key: NODE_ENV
     value: production

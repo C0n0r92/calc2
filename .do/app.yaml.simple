@@ -1,7 +1,7 @@
 name: mortgage-calculator-app
 
 services:
-# Rails Backend API
+# Start with just the Rails API first
 - name: rails-api
   source_dir: mortgage_calculator_api
   github:
@@ -23,38 +23,12 @@ services:
   - key: SECRET_KEY_BASE
     value: "7cf6edda93cf09a4f69db15991af58789ee1264cd2ae54d49a9f52cedea88e291aa352a0d9d67e5feb1a63eb093ef9ff2c7f7e540867d1ab992e7a1d942e92d9"
   routes:
-  - path: /api
-    preserve_path_prefix: true
+  - path: /
   health_check:
     http_path: /up
-
-# React Frontend - Static Site
-- name: frontend
-  source_dir: frontend
-  github:
-    repo: C0n0r92/mortgage_payoff_calculator
-    branch: main
-  instance_count: 1
-  instance_size_slug: basic-xxs
-  environment_slug: node-js
-  envs:
-  - key: NODE_ENV
-    value: production
-  - key: VITE_API_URL
-    value: "/api"
-  - key: VITE_GA_MEASUREMENT_ID
-    value: "G-43FMLL1ZG0"
-  routes:
-  - path: /
 
 databases:
 - name: managed-db
   cluster_name: mortgage-calculator-cluster
   engine: PG
   production: true
-
-domains:
-- domain: mortgagepayoffcalculator.io
-  type: PRIMARY
-- domain: www.mortgagepayoffcalculator.io
-  type: ALIAS
