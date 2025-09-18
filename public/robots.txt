@@ -1,21 +1,19 @@
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://yourdomain.com/sitemap.xml
+# Sitemap
+Sitemap: https://mortgagepayoffcalculator.io/sitemap.xml
 
-# Allow all search engines to crawl the mortgage payoff calculator
-# This helps with SEO for "mortgage payoff calculator" keywords
-
-# Block any API endpoints (if you have them in production)
+# Disallow API endpoints from being crawled
 Disallow: /api/
 
-# Block any admin areas (if you add them later)
-Disallow: /admin/
-
-# Block any test or development paths
-Disallow: /test/
-Disallow: /dev/
-
-# Crawl delay (optional - helps prevent overloading your server)
-Crawl-delay: 1
+# Allow crawling of all main pages
+Allow: /
+Allow: *.css
+Allow: *.js
+Allow: *.png
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.gif
+Allow: *.svg
+Allow: *.ico

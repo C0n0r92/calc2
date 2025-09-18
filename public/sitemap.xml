@@ -1,32 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-
-  <!-- Main Page - Mortgage Payoff Calculator -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <!-- Homepage - Mortgage Payoff Calculator -->
   <url>
-    <loc>https://yourdomain.com/</loc>
+    <loc>https://mortgagepayoffcalculator.io/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- You can add more pages as your site grows -->
-  <!-- 
+  
+  <!-- Mortgage Payment Calculator -->
   <url>
-    <loc>https://yourdomain.com/about</loc>
+    <loc>https://mortgagepayoffcalculator.io/#mortgage-payment-calculator</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Early Mortgage Payoff Calculator -->
+  <url>
+    <loc>https://mortgagepayoffcalculator.io/#early-payoff-calculator</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Extra Payment Impact Calculator -->
+  <url>
+    <loc>https://mortgagepayoffcalculator.io/#extra-payment-calculator</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Mortgage Payoff Timeline -->
+  <url>
+    <loc>https://mortgagepayoffcalculator.io/#mortgage-payoff-timeline</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Mortgage Overpayment Scenarios -->
+  <url>
+    <loc>https://mortgagepayoffcalculator.io/#mortgage-overpayment-scenarios</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Mortgage Amortization Schedule -->
+  <url>
+    <loc>https://mortgagepayoffcalculator.io/#mortgage-amortization-schedule</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   
+  <!-- Mortgage Interest Rate Explorer -->
   <url>
-    <loc>https://yourdomain.com/blog</loc>
+    <loc>https://mortgagepayoffcalculator.io/#mortgage-rate-explorer</loc>
     <lastmod>2025-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
-  -->
+  
+  <!-- PMI Calculator -->
+  <url>
+    <loc>https://mortgagepayoffcalculator.io/#pmi-calculator</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Mortgage Scenarios Comparison -->
+  <url>
+    <loc>https://mortgagepayoffcalculator.io/#mortgage-comparison</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 
 </urlset>
