@@ -1,29 +1,8 @@
 name: mortgage-calculator-app
 services:
-# Rails Backend API - Simple configuration
-- name: rails-api
-  source_dir: /
-  github:
-    repo: C0n0r92/mortgage_payoff_calculator
-    branch: main
-  instance_count: 1
-  instance_size_slug: basic-xxs
-  http_port: 8080
-  environment_slug: ruby
-  envs:
-  - key: RAILS_ENV
-    value: production
-  - key: RAILS_MASTER_KEY
-    value: ae744e6df9969de7459815939e7f7ed3
-  - key: DATABASE_URL
-    value: ${managed-db.DATABASE_URL}
-  routes:
-  - path: /api
-    preserve_path_prefix: true
-
-# React Frontend - Matching working Python project pattern
+# React Frontend - Static site from root
 - name: frontend
-  source_dir: /frontend
+  source_dir: /
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
@@ -50,6 +29,27 @@ services:
     timeout_seconds: 5
     success_threshold: 1
     failure_threshold: 3
+
+# Rails Backend API - Using Ruby files from root
+- name: rails-api
+  source_dir: /
+  github:
+    repo: C0n0r92/mortgage_payoff_calculator
+    branch: main
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 8080
+  environment_slug: ruby
+  envs:
+  - key: RAILS_ENV
+    value: production
+  - key: RAILS_MASTER_KEY
+    value: ae744e6df9969de7459815939e7f7ed3
+  - key: DATABASE_URL
+    value: ${managed-db.DATABASE_URL}
+  routes:
+  - path: /api
+    preserve_path_prefix: true
 
 databases:
 - name: managed-db
