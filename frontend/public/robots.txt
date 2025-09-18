@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://mortgagepayoffcalculator.io/sitemap.xml
+
+# Disallow API endpoints from being crawled
+Disallow: /api/
+
+# Allow crawling of all main pages
+Allow: /
+Allow: *.css
+Allow: *.js
+Allow: *.png
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.gif
+Allow: *.svg
+Allow: *.ico
