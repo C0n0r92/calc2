@@ -9,7 +9,10 @@ services:
     branch: main
   instance_count: 1
   instance_size_slug: basic-xxs
+  http_port: 8080
   environment_slug: ruby
+  build_command: ASSETS_PRECOMPILE=true bundle install && bundle exec rails assets:precompile
+  run_command: bundle exec rails db:migrate RAILS_ENV=production && bundle exec rails db:seed RAILS_ENV=production && bundle exec rails server -b 0.0.0.0 -p $PORT
   envs:
   - key: RAILS_ENV
     value: production
@@ -17,35 +20,34 @@ services:
     value: "true"
   - key: RAILS_LOG_TO_STDOUT
     value: "true"
+  - key: RAILS_FORCE_SSL
+    value: "false"
+  - key: PORT
+    value: "8080"
   - key: DATABASE_URL
     value: "${managed-db.DATABASE_URL}"
     scope: RUN_TIME
   - key: SECRET_KEY_BASE
-    value: "7cf6edda93cf09a4f69db15991af58789ee1264cd2ae54d49a9f52cedea88e291aa352a0d9d67e5feb1a63eb093ef9ff2c7f7e540867d1ab992e7a1d942e92d9"
+    value: "c55f5859b93eb410be17acc7736ecaee5f9ee155241bb544d85c2cfbcac8b940b3dd6921e062992c56cc398cd27ce3add6c8f00dd81f29e4336b34424789c6e0"
+  - key: RAILS_MASTER_KEY
+    value: "ae744e6df9969de7459815939e7f7ed3"
+  - key: ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
+    value: "506a6de18029562a601babdfdb21d19b0781596e1f7f668a14c126c3b5eebf90"
+  - key: ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
+    value: "7c222162e7b199fe6208fdc8188b6c7392a4875a3d10cabafe8a59ef292320ab"
+  - key: ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+    value: "08908fb2b9e4925a41502515d2a4b7e8bb73fc7210de6313cdacedaf3f36a39c"
+  - key: GOOGLE_OAUTH_CLIENT_ID
+    value: "17667998741-fot2kasnreigcof89u7nu938pj6bmo7k.apps.googleusercontent.com"
+  - key: GOOGLE_OAUTH_CLIENT_SECRET
+    value: "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"
+  - key: GOOGLE_OAUTH_REDIRECT_URI
+    value: "https://mortgagepayoffcalculator.io/api/auth/google_oauth2/callback"
   routes:
   - path: /api
     preserve_path_prefix: true
   health_check:
     http_path: /up
-
-# React Frontend - Static Site
-- name: frontend
-  source_dir: frontend
-  github:
-    repo: C0n0r92/mortgage_payoff_calculator
-    branch: main
-  instance_count: 1
-  instance_size_slug: basic-xxs
-  environment_slug: node-js
-  envs:
-  - key: NODE_ENV
-    value: production
-  - key: VITE_API_URL
-    value: "/api"
-  - key: VITE_GA_MEASUREMENT_ID
-    value: "G-43FMLL1ZG0"
-  routes:
-  - path: /
 
 databases:
 - name: managed-db
