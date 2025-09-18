@@ -1,23 +1,44 @@
 name: mortgage-calculator-app
 
 services:
-# Rails API - Using heroku-buildpack-ruby via DigitalOcean
+# Rails API - Using Dockerfile instead of buildpacks
 - name: rails-api
   source_dir: mortgage_calculator_api
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
-  environment_slug: ruby
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 8080
+  dockerfile_path: Dockerfile
   envs:
   - key: RAILS_ENV
     value: production
   - key: RAILS_MASTER_KEY
     value: ae744e6df9969de7459815939e7f7ed3
+  - key: RAILS_SERVE_STATIC_FILES
+    value: "true"
+  - key: RAILS_LOG_TO_STDOUT
+    value: "true"
   - key: DATABASE_URL
     value: "${managed-db.DATABASE_URL}"
     scope: RUN_TIME
+  - key: SECRET_KEY_BASE
+    value: "7cf6edda93cf09a4f69db15991af58789ee1264cd2ae54d49a9f52cedea88e291aa352a0d9d67e5feb1a63eb093ef9ff2c7f7e540867d1ab992e7a1d942e92d9"
+  routes:
+  - path: /api
+    preserve_path_prefix: true
+  health_check:
+    http_path: /up
 
 databases:
 - name: managed-db
+  cluster_name: mortgage-calculator-cluster
   engine: PG
   production: true
+
+domains:
+- domain: mortgagepayoffcalculator.io
+  type: PRIMARY
+- domain: www.mortgagepayoffcalculator.io
+  type: ALIAS
