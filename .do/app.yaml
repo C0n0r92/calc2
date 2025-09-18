@@ -21,7 +21,31 @@ services:
   - path: /api
     preserve_path_prefix: true
 
+# React Frontend - Simple configuration
+- name: frontend
+  source_dir: frontend
+  github:
+    repo: C0n0r92/mortgage_payoff_calculator
+    branch: main
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 3000
+  environment_slug: node-js
+  envs:
+  - key: NODE_ENV
+    value: production
+  - key: VITE_API_URL
+    value: "/api"
+  routes:
+  - path: /
+
 databases:
 - name: managed-db
   engine: PG
   production: true
+
+domains:
+- domain: mortgagepayoffcalculator.io
+  type: PRIMARY
+- domain: www.mortgagepayoffcalculator.io
+  type: ALIAS
