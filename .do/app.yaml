@@ -1,11 +1,4 @@
 name: mortgage-calculator-app
-region: lon
-domains:
-- domain: mortgagepayoffcalculator.io
-  type: PRIMARY
-- domain: www.mortgagepayoffcalculator.io
-  type: ALIAS
-
 services:
 # Rails Backend API
 - name: rails-api
@@ -39,7 +32,7 @@ services:
   - path: /api
     preserve_path_prefix: true
   health_check:
-    http_path: /api/v1/mortgage_calculations/health
+    http_path: /up
 
 # React Frontend
 - name: frontend
@@ -77,4 +70,8 @@ databases:
   engine: PG
   production: true
 
-static_sites: []
+domains:
+- domain: mortgagepayoffcalculator.io
+  type: PRIMARY
+- domain: www.mortgagepayoffcalculator.io
+  type: ALIAS
