@@ -10,7 +10,7 @@ services:
   instance_size_slug: basic-xxs
   http_port: 8080
   build_command: bundle install && bundle exec rails db:prepare && bundle exec rails assets:precompile
-  run_command: bundle exec rails server -b 0.0.0.0 -p 8080
+  run_command: bundle exec puma -C config/puma.rb
   environment_slug: ruby
   buildpack_stack: ubuntu-22
   buildpacks:
@@ -34,6 +34,9 @@ services:
   - key: SECRET_KEY_BASE
     scope: RUN_AND_BUILD_TIME
     value: "7cf6edda93cf09a4f69db15991af58789ee1264cd2ae54d49a9f52cedea88e291aa352a0d9d67e5feb1a63eb093ef9ff2c7f7e540867d1ab992e7a1d942e92d9"
+  - key: PORT
+    scope: RUN_AND_BUILD_TIME
+    value: "8080"
   routes:
   - path: /api
     preserve_path_prefix: true
