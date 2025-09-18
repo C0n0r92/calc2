@@ -21,7 +21,7 @@ services:
   - path: /api
     preserve_path_prefix: true
 
-# React Frontend - Simple configuration
+# React Frontend - Matching working Python project pattern
 - name: frontend
   source_dir: frontend
   github:
@@ -30,14 +30,26 @@ services:
   instance_count: 1
   instance_size_slug: basic-xxs
   http_port: 3000
+  build_command: npm install --include=dev && npm run build
+  run_command: npm run preview -- --host 0.0.0.0 --port 3000
   environment_slug: node-js
   envs:
   - key: NODE_ENV
     value: production
   - key: VITE_API_URL
     value: "/api"
+  - key: VITE_GA_MEASUREMENT_ID
+    value: "G-43FMLL1ZG0"
   routes:
   - path: /
+  health_check:
+    http_path: /
+    port: 3000
+    initial_delay_seconds: 30
+    period_seconds: 10
+    timeout_seconds: 5
+    success_threshold: 1
+    failure_threshold: 3
 
 databases:
 - name: managed-db
