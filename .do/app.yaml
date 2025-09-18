@@ -9,7 +9,6 @@ domains:
 services:
 # Rails Backend API
 - name: rails-api
-  environment_slug: ruby
   source_dir: /mortgage_calculator_api
   github:
     repo: C0n0r92/mortgage_payoff_calculator
@@ -17,8 +16,8 @@ services:
   instance_count: 1
   instance_size_slug: basic-xxs
   http_port: 8080
-  build_command: bundle install --deployment --without development test && bundle exec rails assets:precompile && bundle exec rails db:prepare
-  run_command: bundle exec rails server -b 0.0.0.0 -p 8080
+  build_command: ASSETS_PRECOMPILE=true bundle install && bundle exec rails assets:precompile
+  run_command: bundle exec rails db:migrate RAILS_ENV=production && bundle exec rails db:seed RAILS_ENV=production && bundle exec rails server -b 0.0.0.0 -p $PORT
   envs:
   - key: RAILS_ENV
     value: production
@@ -41,7 +40,6 @@ services:
 
 # React Frontend
 - name: frontend
-  environment_slug: node-js
   source_dir: /
   github:
     repo: C0n0r92/mortgage_payoff_calculator
