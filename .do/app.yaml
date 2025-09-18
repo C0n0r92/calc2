@@ -17,6 +17,7 @@ services:
   instance_size_slug: basic-xxs
   http_port: 8080
   build_command: bundle install --deployment --without development test && bundle exec rails assets:precompile && bundle exec rails db:prepare
+  run_command: bundle exec rails server -b 0.0.0.0 -p 8080
   envs:
   - key: RAILS_ENV
     value: production
