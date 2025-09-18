@@ -23,7 +23,7 @@ services:
 
 # React Frontend - Matching working Python project pattern
 - name: frontend
-  source_dir: frontend
+  source_dir: /frontend
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
