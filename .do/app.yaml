@@ -9,7 +9,7 @@ domains:
 services:
 # Rails Backend API
 - name: rails-api
-  source_dir: mortgage_calculator_api
+  source_dir: /mortgage_calculator_api
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
@@ -43,7 +43,7 @@ services:
 
 # React Frontend
 - name: frontend
-  source_dir: frontend
+  source_dir: /frontend
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
