@@ -1,7 +1,6 @@
 name: mortgage-calculator-app
 services:
 - name: rails-api
-  source_dir: mortgage_calculator_api
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
