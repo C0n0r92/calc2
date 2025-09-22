@@ -44,6 +44,11 @@ services:
   - key: VITE_GA_MEASUREMENT_ID
     scope: RUN_AND_BUILD_TIME
     value: "G-43FMLL1ZG0"
+  domains:
+  - domain: www.mortgagepayoffcalculator.io
+    type: PRIMARY
+  - domain: mortgagepayoffcalculator.io
+    type: ALIAS
   routes:
   - path: /
   health_check:
