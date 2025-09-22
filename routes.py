@@ -19,6 +19,12 @@ async def health_check():
     return HealthCheck(status="healthy", timestamp=datetime.now())
 
 
+@router.get("/up")
+async def up_check():
+    """Simple up check endpoint for frontend"""
+    return {"status": "up"}
+
+
 @router.post("/api/v1/mortgage_calculations/calculate", response_model=MortgageCalculationResult)
 async def calculate_mortgage(request: MortgageCalculationRequest):
     """Calculate mortgage payments and amortization schedule"""

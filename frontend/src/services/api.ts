@@ -1,6 +1,7 @@
 import { MortgageInputs, PaymentBreakdown, AmortizationEntry } from '../types/mortgage';
 
-const API_BASE_URL = 'http://localhost:3000';
+// Use relative path for production, localhost for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 interface ApiResponse<T> {
   result?: T;

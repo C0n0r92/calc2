@@ -57,7 +57,8 @@ function App() {
   useEffect(() => {
     const testConnection = async () => {
       try {
-        await fetch('http://localhost:3000/up');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        await fetch(`${apiUrl}/up`);
         setApiConnected(true);
       } catch {
         setApiConnected(false);
