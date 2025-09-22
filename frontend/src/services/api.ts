@@ -1,7 +1,16 @@
 import { MortgageInputs, PaymentBreakdown, AmortizationEntry } from '../types/mortgage';
 
-// Use relative path for production, localhost for development
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Determine API base URL based on environment
+const getApiBaseUrl = () => {
+  // In production (Digital Ocean), use relative path
+  if (window.location.hostname.includes('ondigitalocean.app')) {
+    return '';  // Use relative path, same domain
+  }
+  // In development, use environment variable or localhost
+  return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 interface ApiResponse<T> {
   result?: T;

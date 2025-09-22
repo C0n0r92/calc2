@@ -57,7 +57,10 @@ function App() {
   useEffect(() => {
     const testConnection = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        // Use relative path in production, localhost in development
+        const apiUrl = window.location.hostname.includes('ondigitalocean.app') 
+          ? '' 
+          : (import.meta.env.VITE_API_URL || 'http://localhost:3000');
         await fetch(`${apiUrl}/up`);
         setApiConnected(true);
       } catch {
