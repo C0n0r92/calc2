@@ -1,15 +1,29 @@
-# Digital Ocean Python Backend Detection Entry Point
-# This file helps Digital Ocean auto-detect the Python backend component
-# The actual backend code is in the backend/ directory
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from config import settings
+from routes import router
 
-import sys
-import os
+app = FastAPI(
+    title="Mortgage Calculator API",
+    description="A simple mortgage calculator API for calculating payments and comparing scenarios",
+    version="1.0.0"
+)
 
-# Add the backend directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend'))
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Import and run the FastAPI app from the backend directory
-from backend.app.main import app
+# Include routes
+app.include_router(router)
+
+@app.get("/")
+async def root():
+    return {"message": "Mortgage Calculator API", "status": "running"}
 
 if __name__ == "__main__":
     import uvicorn

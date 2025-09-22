@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
-from app.schemas import (
+from schemas import (
     MortgageCalculationRequest, 
     MortgageCalculationResult, 
     ScenarioComparisonRequest,
     ScenarioComparison,
     HealthCheck
 )
-from app.services.mortgage_calculator import MortgageCalculatorService
+from services.mortgage_calculator import MortgageCalculatorService
 from datetime import datetime
 from typing import List
 
