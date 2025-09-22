@@ -1,44 +1,47 @@
 name: mortgage-calculator-app
 region: nyc
-services:
-- name: python-api
-  source_dir: python-backend
-  github:
-    repo: C0n0r92/calc2
-    branch: main
-    deploy_on_push: true
-  dockerfile_path: Dockerfile
-  http_port: 8000
-  instance_count: 1
-  instance_size_slug: apps-s-1vcpu-1gb
-  health_check:
-    http_path: /health
-  envs:
-  - key: ENVIRONMENT
-    value: production
-  - key: ALLOWED_ORIGINS
-    value: "https://mortgage-calculator-app.ondigitalocean.app"
+
+# React Frontend - Auto-detected from root package.json
 static_sites:
 - name: frontend
-  source_dir: webapp
   github:
     repo: C0n0r92/calc2
     branch: main
     deploy_on_push: true
-  environment_slug: node-js
   build_command: npm install && npm run build
   output_dir: dist
   envs:
   - key: NODE_ENV
     value: production
   - key: VITE_API_URL
-    value: "https://mortgage-calculator-app-python-api.ondigitalocean.app"
+    value: "https://mortgage-calculator-app-backend.ondigitalocean.app"
   - key: VITE_GA_MEASUREMENT_ID
     value: "G-43FMLL1ZG0"
+
+# Python Backend - Using buildpack from backend/ directory
+services:
+- name: backend
+  source_dir: backend
+  github:
+    repo: C0n0r92/calc2
+    branch: main
+    deploy_on_push: true
+  environment_slug: python
+  instance_count: 1
+  instance_size_slug: apps-s-1vcpu-1gb
+  http_port: 8000
+  run_command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+  envs:
+  - key: ENVIRONMENT
+    value: production
+  - key: ALLOWED_ORIGINS
+    value: "https://mortgage-calculator-app.ondigitalocean.app"
+
+# Routing Configuration
 ingress:
   rules:
   - component:
-      name: python-api
+      name: backend
     match:
       path:
         prefix: /api
@@ -47,6 +50,8 @@ ingress:
     match:
       path:
         prefix: /
+
+# Custom Domain (Optional)
 domains:
 - domain: mortgagepayoffcalculator.io
   type: PRIMARY
