@@ -19,35 +19,27 @@ services:
   routes:
   - path: /
 
-# Rails Backend API - With buildpack detection
-- name: rails-api
-  source_dir: backend-api
+# Python FastAPI Backend
+- name: python-api
+  type: service
+  source_dir: python-backend
   github:
     repo: C0n0r92/mortgage_payoff_calculator
     branch: main
   instance_count: 1
   instance_size_slug: basic-xxs
-  http_port: 8080
-  build_command: bundle install && bundle exec rails db:prepare
-  run_command: bundle exec rails server -b 0.0.0.0 -p 8080
-  environment_slug: ruby
+  http_port: 8000
+  dockerfile_path: python-backend/Dockerfile
+  health_check:
+    http_path: /health
   envs:
-  - key: RAILS_ENV
+  - key: ENVIRONMENT
     value: production
-  - key: RAILS_MASTER_KEY
-    value: ae744e6df9969de7459815939e7f7ed3
-  - key: DATABASE_URL
-    value: ${managed-db.DATABASE_URL}
-  - key: PORT
-    value: "8080"
+  - key: ALLOWED_ORIGINS
+    value: "https://mortgagepayoffcalculator.io,https://www.mortgagepayoffcalculator.io"
   routes:
   - path: /api
     preserve_path_prefix: true
-
-databases:
-- name: managed-db
-  engine: PG
-  production: true
 
 domains:
 - domain: mortgagepayoffcalculator.io

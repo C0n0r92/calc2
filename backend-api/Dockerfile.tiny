@@ -1,0 +1,42 @@
+# Ultra-minimal Rails API (API-only, no assets)
+FROM ruby:3.2.2-alpine
+
+# Install minimal dependencies
+RUN apk add --no-cache \
+    build-base \
+    postgresql-dev \
+    postgresql-client && \
+    rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# Install gems
+COPY Gemfile Gemfile.lock ./
+RUN bundle config --global frozen 1 && \
+    bundle config set --local without 'development test' && \
+    bundle install --jobs 4 --retry 3 && \
+    bundle clean --force && \
+    apk del build-base && \
+    rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
+
+# Copy only essential files
+COPY app ./app
+COPY config ./config
+COPY db ./db
+COPY lib ./lib
+COPY config.ru Rakefile ./
+
+# Create user and directories
+RUN adduser -D -s /bin/sh appuser && \
+    mkdir -p tmp/pids log && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
+ENV RAILS_ENV=production \
+    RAILS_LOG_TO_STDOUT=true \
+    PORT=3000
+
+EXPOSE 3000
+
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]

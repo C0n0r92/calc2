@@ -1,0 +1,43 @@
+# Atomic Rails API - install only specific components, not full "rails" gem
+FROM ruby:3.2.2-alpine
+
+RUN apk add --no-cache postgresql-client && \
+    apk add --no-cache --virtual .build-deps build-base postgresql-dev
+
+WORKDIR /app
+
+# Create Gemfile with INDIVIDUAL Rails components (not "rails" meta-gem)
+RUN printf 'source "https://rubygems.org"\n\
+ruby "3.2.2"\n\
+gem "activerecord", "~> 8.0.2"\n\
+gem "actionpack", "~> 8.0.2"\n\
+gem "railties", "~> 8.0.2"\n\
+gem "pg", "~> 1.1"\n\
+gem "puma", ">= 5.0"\n\
+gem "bcrypt", "~> 3.1"\n\
+gem "jwt", "~> 3.1"\n\
+gem "rack-cors", "~> 3.0"\n' > Gemfile
+
+# Install only these specific gems
+RUN bundle config set --local without 'development test' && \
+    bundle install --no-cache && \
+    apk del .build-deps && \
+    rm -rf /usr/local/bundle/cache /tmp/* /var/tmp/*
+
+# Copy app
+COPY app ./app
+COPY config ./config  
+COPY db ./db
+COPY config.ru ./
+
+RUN adduser -D appuser && \
+    mkdir -p tmp/pids && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
+ENV RAILS_ENV=production
+
+EXPOSE 3000
+
+CMD ["bundle", "exec", "puma", "-b", "tcp://0.0.0.0:3000"]

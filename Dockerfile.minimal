@@ -1,0 +1,46 @@
+# Ultra-minimal Rails API only (no frontend in container)
+FROM ruby:3.2.2-alpine
+
+# Install only absolute essentials
+RUN apk add --no-cache \
+    postgresql-client \
+    tzdata \
+    && rm -rf /var/cache/apk/*
+
+# Create app user for security
+RUN adduser -D -s /bin/sh appuser
+
+WORKDIR /app
+
+# Copy only essential gems
+COPY backend-api/Gemfile backend-api/Gemfile.lock ./
+RUN bundle config --global frozen 1 && \
+    bundle config set --local without 'development test' && \
+    bundle install --no-cache && \
+    bundle clean --force && \
+    rm -rf /usr/local/bundle/cache
+
+# Copy only essential app files
+COPY backend-api/app ./app
+COPY backend-api/config ./config
+COPY backend-api/db ./db
+COPY backend-api/lib ./lib
+COPY backend-api/config.ru ./
+COPY backend-api/Rakefile ./
+
+# Create minimal directories
+RUN mkdir -p tmp/pids log && \
+    chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
+
+# Set production environment
+ENV RAILS_ENV=production \
+    RAILS_LOG_TO_STDOUT=true \
+    RAILS_SERVE_STATIC_FILES=true
+
+EXPOSE 3000
+
+# Simple startup command
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]

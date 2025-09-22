@@ -1,0 +1,44 @@
+# Minimal Rails API container
+FROM ruby:3.2.2-slim
+
+# Install system dependencies including minimal build tools
+RUN apt-get update -qq && \
+    apt-get install -yq --no-install-recommends \
+      build-essential \
+      libpq-dev \
+      postgresql-client \
+      && apt-get clean && \
+      rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Create app user
+RUN useradd -m -s /bin/bash appuser
+
+WORKDIR /app
+
+# Copy gemfiles and install gems
+COPY Gemfile Gemfile.lock ./
+RUN bundle config --global frozen 1 && \
+    bundle config set --local without 'development test' && \
+    bundle install --jobs 4 --retry 3 && \
+    bundle clean --force
+
+# Copy application code
+COPY . .
+
+# Create necessary directories and set permissions
+RUN mkdir -p tmp/pids log storage && \
+    chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
+
+# Set environment variables
+ENV RAILS_ENV=production \
+    RAILS_LOG_TO_STDOUT=true \
+    RAILS_SERVE_STATIC_FILES=true \
+    PORT=3000
+
+EXPOSE 3000
+
+# Simple startup
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
