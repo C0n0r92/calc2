@@ -18,7 +18,7 @@ services:
     value: production
   - key: ALLOWED_ORIGINS
     scope: RUN_AND_BUILD_TIME
-    value: '["*"]'
+    value: "*"
   routes:
   - path: /api
     preserve_path_prefix: true
