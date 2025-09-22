@@ -36,10 +36,13 @@ services:
   environment_slug: node-js
   envs:
   - key: NODE_ENV
+    scope: RUN_AND_BUILD_TIME
     value: production
   - key: VITE_API_URL
+    scope: RUN_AND_BUILD_TIME
     value: "/api"
   - key: VITE_GA_MEASUREMENT_ID
+    scope: RUN_AND_BUILD_TIME
     value: "G-43FMLL1ZG0"
   routes:
   - path: /
