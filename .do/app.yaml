@@ -5,7 +5,7 @@ services:
   type: static_site
   source_dir: webapp
   github:
-    repo: C0n0r92/mortgage_payoff_calculator
+    repo: C0n0r92/calc2
     branch: main
   build_command: npm install && npm run build
   output_dir: dist
@@ -24,7 +24,7 @@ services:
   type: service
   source_dir: python-backend
   github:
-    repo: C0n0r92/mortgage_payoff_calculator
+    repo: C0n0r92/calc2
     branch: main
   instance_count: 1
   instance_size_slug: basic-xxs
