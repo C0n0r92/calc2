@@ -1,27 +1,25 @@
 name: mortgage-calculator-app
-services:
-# React Frontend - Static Site
+static_sites:
 - name: frontend
-  type: static_site
   source_dir: webapp
   github:
     repo: C0n0r92/calc2
     branch: main
   build_command: npm install && npm run build
   output_dir: dist
+  environment_slug: node-js
   envs:
   - key: NODE_ENV
     value: production
   - key: VITE_API_URL
-    value: "/api"
+    value: "https://mortgage-calculator-app-python-api.ondigitalocean.app"
   - key: VITE_GA_MEASUREMENT_ID
     value: "G-43FMLL1ZG0"
   routes:
   - path: /
 
-# Python FastAPI Backend
+services:
 - name: python-api
-  type: service
   source_dir: python-backend
   github:
     repo: C0n0r92/calc2
@@ -29,14 +27,14 @@ services:
   instance_count: 1
   instance_size_slug: basic-xxs
   http_port: 8000
-  dockerfile_path: python-backend/Dockerfile
+  dockerfile_path: Dockerfile
   health_check:
     http_path: /health
   envs:
   - key: ENVIRONMENT
     value: production
   - key: ALLOWED_ORIGINS
-    value: "https://mortgagepayoffcalculator.io,https://www.mortgagepayoffcalculator.io"
+    value: "https://mortgage-calculator-app.ondigitalocean.app"
   routes:
   - path: /api
     preserve_path_prefix: true
