@@ -36,7 +36,7 @@ services:
   - key: ENVIRONMENT
     value: production
   - key: ALLOWED_ORIGINS
-    value: "https://mortgage-calculator-app.ondigitalocean.app"
+    value: '["https://mortgage-calculator-app.ondigitalocean.app"]'
 
 # Routing Configuration
 ingress:
