@@ -1,9 +1,4 @@
 name: mortgage-calculator-app
-domains:
-- domain: www.mortgagepayoffcalculator.io
-  type: PRIMARY
-- domain: mortgagepayoffcalculator.io
-  type: ALIAS
 services:
 # Python Backend API
 - name: api
